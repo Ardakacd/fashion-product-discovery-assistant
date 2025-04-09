@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 245, 245, 245;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+@layer components {
+  .chat-bubble {
+    @apply p-4 rounded-lg max-w-[80%];
+  }
+  
+  .chat-bubble-user {
+    @apply bg-primary-light text-white self-end rounded-br-none;
+  }
+  
+  .chat-bubble-assistant {
+    @apply bg-gray-100 text-gray-800 self-start rounded-bl-none;
+  }
+  
+  .product-card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-200 hover:shadow-lg hover:scale-105;
+  }
+  
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-white hover:bg-secondary-dark;
+  }
+}
