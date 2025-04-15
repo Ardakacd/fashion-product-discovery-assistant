@@ -14,18 +14,13 @@ export interface Product {
   
   export interface ProductQueryRequest {
     query: string;
-    extracted_attributes: Record<string, any>;
-    filters?: Record<string, any>;
-    page?: number;
-    limit?: number;
   }
   
   export interface ProductSearchResponse {
     products: Product[];
     total: number;
-    page: number;
-    limit: number;
-    query: string;
+    llm_response: string;
+    tool_used: boolean;
   }
   
   export interface ChatMessage {

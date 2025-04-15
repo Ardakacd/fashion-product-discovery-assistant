@@ -36,9 +36,6 @@ export default function Trending() {
         
         const response = await searchProducts({
           query,
-          extracted_attributes: extractedAttributes,
-          page: 1,
-          limit: 12
         });
         
         setProducts(response.products);

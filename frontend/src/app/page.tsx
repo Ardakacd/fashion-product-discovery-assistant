@@ -19,54 +19,7 @@ export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Function to extract attributes from a query
-  const extractAttributes = (query: string) => {
-    const attributes: Record<string, any> = {};
-    
-    // Extract color
-    const colorMatch = query.match(/(red|blue|green|black|white|yellow|purple|pink|orange|brown|grey|gray)/i);
-    if (colorMatch) {
-      attributes.color = colorMatch[0].toLowerCase();
-    }
-    
-    // Extract brand
-    const brandMatch = query.match(/(nike|adidas|puma|reebok|new balance|under armour|asics|converse|vans|zara|h&m|calvin klein|tommy hilfiger|gap|levi's|gucci|louis vuitton|chanel)/i);
-    if (brandMatch) {
-      attributes.brand = brandMatch[0];
-    }
-    
-    // Extract category
-    const categoryMatch = query.match(/(shoes|sneakers|running shoes|boots|sandals|shirt|t-shirt|blouse|dress|jeans|pants|trousers|shorts|skirt|jacket|coat|sweater|hoodie|swimwear|underwear|socks|hat|cap|scarf|watch|bracelet|necklace|earrings|ring)/i);
-    if (categoryMatch) {
-      attributes.category = categoryMatch[0];
-    }
-    
-    // Extract size
-    const sizeMatch = query.match(/size\s+(\d+(?:\.\d+)?|xs|s|m|l|xl|xxl)/i);
-    if (sizeMatch) {
-      attributes.size = sizeMatch[1];
-    }
-    
-    // Extract price
-    const priceMatch = query.match(/under\s+\$(\d+)/i) || query.match(/less than\s+\$(\d+)/i);
-    if (priceMatch) {
-      attributes.price = {
-        max: parseInt(priceMatch[1])
-      };
-    }
-    
-    // More complex price range
-    const priceRangeMatch = query.match(/between\s+\$(\d+)\s+and\s+\$(\d+)/i);
-    if (priceRangeMatch) {
-      attributes.price = {
-        min: parseInt(priceRangeMatch[1]),
-        max: parseInt(priceRangeMatch[2])
-      };
-    }
-    
-    return attributes;
-  };
-
+  
   // Scroll to bottom of chat whenever messages change
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -83,19 +36,13 @@ export default function Home() {
     setLoading(true);
     
     try {
-      // Extract attributes from query
-      const extractedAttributes = extractAttributes(inputQuery);
-      
+    
       // Add thinking message
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Searching for products that match your request...' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Thinking...' }]);
       
       // Call API with query and extracted attributes
       const response = await searchProducts({
-        query: inputQuery,
-        extracted_attributes: extractedAttributes,
-
-        page: 1,
-        limit: 12
+        query: inputQuery, 
       });
       
       // Update products
@@ -108,11 +55,16 @@ export default function Home() {
         newMessages.pop();
         
         let responseMessage = '';
-        if (response.products.length > 0) {
-          responseMessage = `I found ${response.total} products matching your search for "${inputQuery}". Here are some options:`;
-        } else {
-          responseMessage = `I couldn't find any products matching "${inputQuery}". Try a different search or be less specific.`;
+        if (response.tool_used){
+            if (response.products.length > 0) {
+                responseMessage = `I found ${response.total} products matching your search for "${inputQuery}". Here are some options:`;
+              } else {
+                responseMessage = `I couldn't find any products matching "${inputQuery}". Try a different search or be less specific.`;
+              }
+        }else{
+            responseMessage = response.llm_response
         }
+        
         
         newMessages.push({ role: 'assistant', content: responseMessage });
         return newMessages;
